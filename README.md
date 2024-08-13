@@ -74,3 +74,4 @@ $ sudo chmod -R 775 bootstrap/cache
 email: taichi.tsuda@example.org
 パスワード：password
 # resev_20240813
+# resev_813
