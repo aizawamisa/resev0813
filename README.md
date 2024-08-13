@@ -2,7 +2,7 @@
 
 飲食店の予約システムを作成。会員登録後、会員情報を用いたログインにより店舗予約やお気に入りの追加が可能。
 
-![alt text](images/home.png)
+![alt text](public/images/home.png)
 
 ## 作成した目的
 
@@ -26,7 +26,7 @@ docker、Laravel 8.x、PHP 7.4、laravel-fortify
 
 ## テーブル設計及び ER 図
 
-![alt text](images/table.png)
+![alt text](public/images/table.png)
 
 ## 環境構築
 
