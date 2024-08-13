@@ -1,88 +1,87 @@
-<!DOCTYPE html>
-<html lang="ja">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact Form</title>
-  <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}" />
-  <link rel="stylesheet" href="{{ asset('css/index.css') }}" />
-</head>
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/index.css') }}">
+@endsection
 
-<body>
-  <header class="header">
-    <div class="header__inner">
-      <a class="header__logo" href="/">
-        Contact Form
-      </a>
+@section('header')
+<form class="header__right" action="/" method="get">
+    <div class="header__search">
+        <label class="select-box__label">
+            <select name="prefecture" class="select-box__item">
+                <option value="">All prefecture</option>
+                @foreach ($prefectures as $prefecture)
+                <option class="select-box__option" value="{{ $prefecture->id }}" {{ request('prefecture') == $prefecture->id ? 'selected' : '' }}>{{ $prefecture->name }}
+                </option>
+                @endforeach
+            </select>
+        </label>
+
+        <label class="select-box__label">
+            <select name="genre" class="select-box__item">
+                <option value="">All genre</option>
+                @foreach ($genres as $genre)
+                <option value="{{ $genre->id }}" {{ request('genre') == $genre->id ? 'selected' : '' }}>
+                    {{ $genre->name }}
+                </option>
+                @endforeach
+            </select>
+        </label>
+
+        <div class="search__item">
+            <div class="search__item-button"></div>
+            <label class="search__item-label">
+                <input type="text" name="word" class="search__item-input" placeholder="Search ..." value="{{ request('word') }}">
+            </label>
+        </div>
     </div>
-  </header>
+</form>
+@endsection
 
-  <main>
-    <div class="contact-form__content">
-      <div class="contact-form__heading">
-        <h2>お問い合わせ</h2>
-      </div>
-      <form class="form">
-        <div class="form__group">
-          <div class="form__group-title">
-            <span class="form__label--item">お名前</span>
-            <span class="form__label--required">必須</span>
-          </div>
-          <div class="form__group-content">
-            <div class="form__input--text">
-              <input type="text" name="name" placeholder="テスト太郎" />
+@section('content')
+<div class="shop__wrap">
+    @foreach ($shops as $shop)
+    <div class="shop__content">
+        <img class="shop__image" src="{{ $shop->image_url }}" alt="イメージ画像">
+        <div class="shop__item">
+            <span class="shop__title">{{ $shop->name }}</span>
+            <div class="shop__tag">
+                <p class="shop__tag-info">#{{ $shop->prefecture->name }}</p>
+                <p class="shop__tag-info">#{{ $shop->genre->name }}</p>
             </div>
-            <div class="form__error">
-              <!--バリデーション機能を実装したら記述します。-->
+            <div class="shop__button">
+                <a href="/detail/{{ $shop->id }}?from=index" class="shop__button-detail">詳しくみる</a>
+                @if (Auth::check())
+                @if (in_array($shop->id, $favorites))
+                <form action="{{ route('unfavorite', $shop) }}" method="post" enctype="application/x-www-form-urlencoded" class="shop__button-favorite form">
+                    @csrf
+                    @method('delete')
+                    <button type="submit" class="shop__button-favorite-btn" title="お気に入り削除">
+                        <img class="favorite__btn-image" src="{{ asset('images/heart_color.png') }}">
+                    </button>
+                </form>
+                @else
+                <form action="{{ route('favorite', $shop) }}" method="post" enctype="application/x-www-form-urlencoded" class="shop__button-favorite form">
+                    @csrf
+                    <button type="submit" class="shop__button-favorite-btn" title="お気に入り追加">
+                        <img class="favorite__btn-image" src="{{ asset('images/heart.png') }}">
+                    </button>
+                </form>
+                @endif
+                @else
+                <button type="button" onclick="location.href='/login'" class="shop__button-favorite-btn">
+                    <img class="favorite__btn-image" src="{{ asset('images/heart.png') }}">
+                </button>
+                @endif
             </div>
-          </div>
         </div>
-        <div class="form__group">
-          <div class="form__group-title">
-            <span class="form__label--item">メールアドレス</span>
-            <span class="form__label--required">必須</span>
-          </div>
-          <div class="form__group-content">
-            <div class="form__input--text">
-              <input type="email" name="email" placeholder="test@example.com" />
-            </div>
-            <div class="form__error">
-              <!--バリデーション機能を実装したら記述します。-->
-            </div>
-          </div>
-        </div>
-        <div class="form__group">
-          <div class="form__group-title">
-            <span class="form__label--item">電話番号</span>
-            <span class="form__label--required">必須</span>
-          </div>
-          <div class="form__group-content">
-            <div class="form__input--text">
-              <input type="tel" name="tel" placeholder="09012345678" />
-            </div>
-            <div class="form__error">
-              <!--バリデーション機能を実装したら記述します。-->
-            </div>
-          </div>
-        </div>
-        <div class="form__group">
-          <div class="form__group-title">
-            <span class="form__label--item">お問い合わせ内容</span>
-          </div>
-          <div class="form__group-content">
-            <div class="form__input--textarea">
-              <textarea name="content" placeholder="資料をいただきたいです"></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="form__button">
-          <button class="form__button-submit" type="submit">送信</button>
-        </div>
-      </form>
     </div>
-  </main>
-</body>
+    @endforeach
 
-</html>
+    @for ($i = 0; $i < 4; $i++) <div class="shop__content dummy">
+</div>
+@endfor
+
+</div>
+<script src="{{ asset('js/search_index.js') }}"></script>
+@endsection

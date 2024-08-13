@@ -10,4 +10,11 @@ RUN curl -sS https://getcomposer.org/installer | php \
   && mv composer.phar /usr/local/bin/composer \
   && composer self-update
 
+# ユーザーとグループを作成
+RUN groupadd -g 1000 www-data \
+  && useradd -u 1000 -g www-data -m www-data
+
+# 作成したユーザーに切り替え
+USER www-data
+
 WORKDIR /var/www
